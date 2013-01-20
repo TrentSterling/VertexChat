@@ -40,7 +40,10 @@ public class VertexChat extends JavaPlugin
     }
     
     @Override
-    public void onDisable(){}
+    public void onDisable()
+    {
+        VertexChatAPI.saveFocusedChannels();
+    }
     
     private void setupEvents()
     {
@@ -66,8 +69,10 @@ public class VertexChat extends JavaPlugin
     
     private void setupChannels()
     {
+        //If channels are currently setup
         if(this.getConfig().contains("channels"))
         {
+            //Create all setup channels
             for(String s : this.getConfig().getStringList("channels"))
             {
                 ChatManager.createChannel(s);

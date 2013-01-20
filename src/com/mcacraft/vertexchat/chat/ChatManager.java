@@ -229,4 +229,20 @@ public class ChatManager
         }
         return false;
     }
+    
+    public static Boolean hasChannel(String pname)
+    {
+        if(!ChatManager.focusedChannelStrMap.containsKey(pname))
+        {
+            return false;
+        }else
+        {
+            return true;
+        }
+    }
+    
+    public static String getDefaultChannel()
+    {
+        return plugin.getConfig().getString("default-channel");
+    }
 }

@@ -27,10 +27,6 @@ public class VConfig
         {
             throw new IllegalArgumentException("Plugin cannot be null!");
         }
-        if(!plugin.isEnabled())
-        {
-            throw new IllegalArgumentException("Plugin must be enabled!");
-        }
         this.path = path;
         this.fileName = fileName;
         this.plugin = plugin;

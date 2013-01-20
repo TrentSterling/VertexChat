@@ -177,4 +177,14 @@ public class VertexChatAPI
             Bukkit.getLogger().log(Level.SEVERE, ex.getLocalizedMessage());
         }
     }
+    
+    public static void saveFocusedChannels()
+    {
+        VConfig data = new VConfig(plugin.getDataFolder()+File.separator+"data", "focused-channels.yml", plugin);
+        for(String s : ChatManager.getListeningChannelsMap().keySet())
+        {
+            data.getConfig().set(s, ChatManager.getListeningChannelsMap().get(s));
+        }
+        data.saveConfig();
+    }
 }
