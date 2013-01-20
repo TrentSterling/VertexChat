@@ -10,6 +10,7 @@ import com.mcacraft.vertexchat.listeners.ChatListener;
 import com.mcacraft.vertexchat.listeners.PlayerJoin;
 import com.mcacraft.vertexchat.util.VConfig;
 import java.io.File;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -42,6 +43,16 @@ public class VertexChat extends JavaPlugin
     @Override
     public void onDisable()
     {
+        if(!this.isEnabled())
+        {
+            Bukkit.getLogger().log(Level.INFO, "not enabled");
+        }
+        
+        if(this == null)
+        {
+            Bukkit.getLogger().log(Level.INFO, "null plugin on the lose");
+        }
+        Bukkit.getLogger().log(Level.INFO, this.getDataFolder().getAbsolutePath());
         VertexChatAPI.saveFocusedChannels();
     }
     

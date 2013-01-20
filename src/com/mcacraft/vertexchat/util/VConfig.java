@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -27,6 +28,7 @@ public class VConfig
         {
             throw new IllegalArgumentException("Plugin cannot be null!");
         }
+
         this.path = path;
         this.fileName = fileName;
         this.plugin = plugin;
@@ -51,6 +53,7 @@ public class VConfig
     {
         if(fileConfig == null)
         {
+            Logger.getLogger("Minecraft").log(Level.INFO, "1");
             this.reloadConfig();
         }
         return fileConfig;
