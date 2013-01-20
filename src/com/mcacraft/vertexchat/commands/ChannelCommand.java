@@ -1,6 +1,8 @@
 package com.mcacraft.vertexchat.commands;
 
 import com.mcacraft.vertexchat.VertexChat;
+import com.mcacraft.vertexchat.VertexChatAPI;
+import com.mcacraft.vertexchat.chat.ChatManager;
 import com.mcacraft.vertexchat.util.MSG;
 import com.mcacraft.vertexchat.util.VConfig;
 import java.io.File;
@@ -53,7 +55,7 @@ public class ChannelCommand implements CommandExecutor
                         MSG.noPermMessage((Player) sender, "/ch create");
                         return true;
                     }
-                    plugin.getChatManager().createChannel(args[1]);
+                    ChatManager.createChannel(args[1]);
                     sender.sendMessage(ChatColor.GREEN+"Success!");
                 }else
                 {
@@ -67,7 +69,7 @@ public class ChannelCommand implements CommandExecutor
                 {
                     try
                     {
-                        plugin.getChatManager().deleteChannel(args[1]);
+                        ChatManager.deleteChannel(args[1]);
                     }catch(Exception e)
                     {
                         sender.sendMessage(ChatColor.RED+"Could not delete "+args[0]);
@@ -81,7 +83,7 @@ public class ChannelCommand implements CommandExecutor
             {
                 if(args.length == 1)
                 {
-                    plugin.getAPI().reloadConfiguration();
+                    VertexChatAPI.reloadConfiguration();
                     sender.sendMessage(ChatColor.GREEN+"Reload done");
                 }else
                 {
@@ -95,16 +97,16 @@ public class ChannelCommand implements CommandExecutor
                     sender.sendMessage(ChatColor.RED+"Usage: /ch leave");
                     return true;
                 }
-                if(plugin.getChatManager().getListeningChannelsMap().get(sender.getName()).size() < 2)
+                if(ChatManager.getListeningChannelsMap().get(sender.getName()).size() < 2)
                 {
                     sender.sendMessage(ChatColor.RED+"Error: You must be focused on one channel. To leave the chat completely type "+ChatColor.YELLOW+"/silence");
                     return true;
                 }
-                String channelOld = plugin.getChatManager().getFocusedChannelName(sender.getName());
-                plugin.getChatManager().leaveFocusedChannel(sender.getName());
-                sender.sendMessage(ChatColor.RED+"You have left "+plugin.getChatManager().getChannelColor(channelOld)+channelOld);
-                String channelNew = plugin.getChatManager().getFocusedChannelName(sender.getName());
-                sender.sendMessage(ChatColor.BLUE+"Force joined "+plugin.getChatManager().getChannelColor(channelNew)+channelNew);
+                String channelOld = ChatManager.getFocusedChannelName(sender.getName());
+                ChatManager.leaveFocusedChannel(sender.getName());
+                sender.sendMessage(ChatColor.RED+"You have left "+ChatManager.getChannelColor(channelOld)+channelOld);
+                String channelNew = ChatManager.getFocusedChannelName(sender.getName());
+                sender.sendMessage(ChatColor.BLUE+"Force joined "+ChatManager.getChannelColor(channelNew)+channelNew);
             }else if(args[0].equalsIgnoreCase("list"))
             {
                 if(args.length != 1)
@@ -115,7 +117,7 @@ public class ChannelCommand implements CommandExecutor
                 
                 String output = "";
                 boolean first = true;
-                for(String s : plugin.getChatManager().getAvaliableChannels())
+                for(String s : ChatManager.getAvaliableChannels())
                 {
                     if(!first)
                     {
@@ -155,20 +157,20 @@ public class ChannelCommand implements CommandExecutor
                 return true;
             }else
             {
-                for(String s : plugin.getChatManager().getAvaliableChannelNicks())
+                for(String s : ChatManager.getAvaliableChannelNicks())
                 {
                     if(s.equalsIgnoreCase(args[0]))
                     {
-                        if(plugin.getChatManager().getChannelFromNick(s).equalsIgnoreCase(plugin.getChatManager().getFocusedChannelName(sender.getName())))
+                        if(ChatManager.getChannelFromNick(s).equalsIgnoreCase(ChatManager.getFocusedChannelName(sender.getName())))
                         {
-                            sender.sendMessage(ChatColor.RED+"Error: You are already focused on "+plugin.getChatManager().getChannelColor(plugin.getChatManager().getFocusedChannelName(sender.getName())) +plugin.getChatManager().getFocusedChannelName(sender.getName()));
+                            sender.sendMessage(ChatColor.RED+"Error: You are already focused on "+ChatManager.getChannelColor(ChatManager.getFocusedChannelName(sender.getName())) +ChatManager.getFocusedChannelName(sender.getName()));
                             return true;
                         }
                         if(sender instanceof Player)
                         {
-                            plugin.getChatManager().addChannelToPlayer(sender.getName(), plugin.getChatManager().getChannelFromNick(s));
-                            plugin.getChatManager().setFocusedChannel(sender.getName(), plugin.getChatManager().getChannelFromNick(s));
-                            sender.sendMessage(ChatColor.GREEN+"Focused on "+plugin.getChatManager().getChannelColor(plugin.getChatManager().getFocusedChannelName(sender.getName())) +plugin.getChatManager().getFocusedChannelName(sender.getName()));
+                            ChatManager.addChannelToPlayer(sender.getName(), ChatManager.getChannelFromNick(s));
+                            ChatManager.setFocusedChannel(sender.getName(), ChatManager.getChannelFromNick(s));
+                            sender.sendMessage(ChatColor.GREEN+"Focused on "+ChatManager.getChannelColor(ChatManager.getFocusedChannelName(sender.getName())) +ChatManager.getFocusedChannelName(sender.getName()));
                             return true;
                         }
                     }

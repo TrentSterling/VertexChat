@@ -16,31 +16,31 @@ import org.bukkit.ChatColor;
  */
 public class ChatManager 
 {
-    private VertexChat plugin;
+    private static VertexChat plugin;
     
-    private HashMap<String,String> allChannels = new HashMap<>(); //{ChannelName, Nick}
-    private HashMap<String,String> allChannelsReverse = new HashMap<>(); //{Nick, ChannelName}
-    private HashMap<String,ChatChannel> focusedChannelMap = new HashMap<>(); //{PlayerName, ChatChannelObj}
-    private HashMap<String,String> focusedChannelStrMap = new HashMap<>(); //{PlayerName, ChatChannelName}
-    private HashMap<String,ChatChannel> channelConverter = new HashMap<>(); //{ChannelName, ChatChannelObj}
-    private HashMap<ChatChannel,String> channelConverterRev = new HashMap<>(); //{ChatChannelObj, ChatChannelName}
-    private HashMap<String,ArrayList<String>> playerLstnChannels = new HashMap<>(); //{PlayerName, List of all the channels they are listening to}
+    private static HashMap<String,String> allChannels = new HashMap<>(); //{ChannelName, Nick}
+    private static HashMap<String,String> allChannelsReverse = new HashMap<>(); //{Nick, ChannelName}
+    private static HashMap<String,ChatChannel> focusedChannelMap = new HashMap<>(); //{PlayerName, ChatChannelObj}
+    private static HashMap<String,String> focusedChannelStrMap = new HashMap<>(); //{PlayerName, ChatChannelName}
+    private static HashMap<String,ChatChannel> channelConverter = new HashMap<>(); //{ChannelName, ChatChannelObj}
+    private static HashMap<ChatChannel,String> channelConverterRev = new HashMap<>(); //{ChatChannelObj, ChatChannelName}
+    private static HashMap<String,ArrayList<String>> playerLstnChannels = new HashMap<>(); //{PlayerName, List of all the channels they are listening to}
     
-    private HashMap<String,Boolean> chatSilencer = new HashMap<>();
+    private static HashMap<String,Boolean> chatSilencer = new HashMap<>();
     
     public ChatManager(){}
     
     public ChatManager(VertexChat instance)
     {
-        this.plugin = instance;
+        ChatManager.plugin = instance;
     }
     
-    public void createChannel(String name)
+    public static void createChannel(String name)
     {
-        this.allChannels.put(name, String.valueOf(name.toUpperCase().charAt(0)));
-        this.channelConverter.put(name, new ChatChannel());
-        this.allChannelsReverse.put(String.valueOf(name.toUpperCase().charAt(0)), name);
-        this.channelConverterRev.put(new ChatChannel(), name);
+        ChatManager.allChannels.put(name, String.valueOf(name.toUpperCase().charAt(0)));
+        ChatManager.channelConverter.put(name, new ChatChannel());
+        ChatManager.allChannelsReverse.put(String.valueOf(name.toUpperCase().charAt(0)), name);
+        ChatManager.channelConverterRev.put(new ChatChannel(), name);
         Bukkit.getLogger().log(Level.INFO, allChannels.toString());
         Bukkit.getLogger().log(Level.INFO, channelConverter.toString());
         Bukkit.getLogger().log(Level.INFO, allChannelsReverse.toString());
@@ -74,18 +74,18 @@ public class ChatManager
         }
     }
     
-    public void deleteChannel(String name)
+    public static void deleteChannel(String name)
     {
-        this.allChannels.remove(name);
+        ChatManager.allChannels.remove(name);
         List<String> channels = plugin.getConfig().getStringList("channels");
         channels.remove(name);
         plugin.getConfig().set("channels", channels);
         plugin.saveConfig();
     }
     
-    public boolean channelExists(String channel)
+    public static boolean channelExists(String channel)
     {
-        for(String s : this.allChannels.keySet())
+        for(String s : ChatManager.allChannels.keySet())
         {
             if(s.equalsIgnoreCase(channel))
             {
@@ -95,131 +95,131 @@ public class ChatManager
         return false;
     }
     
-    public String getNick(String channel)
+    public static String getNick(String channel)
     {
-        return this.allChannels.get(channel);
+        return ChatManager.allChannels.get(channel);
     }
     
-    public ArrayList<String> getAvaliableChannels()
+    public static ArrayList<String> getAvaliableChannels()
     {
         ArrayList<String> channels = new ArrayList<>();
-        for(String s : this.allChannels.keySet())
+        for(String s : ChatManager.allChannels.keySet())
         {
             channels.add(s);
         }
         return channels;
     }
     
-    public ArrayList<String> getAvaliableChannelNicks()
+    public static ArrayList<String> getAvaliableChannelNicks()
     {
         ArrayList<String> nicks = new ArrayList<>();
-        for(String s : this.allChannels.values())
+        for(String s : ChatManager.allChannels.values())
         {
             nicks.add(s);
         }
         return nicks;
     }
     
-    public ChatChannel getFocusedChannel(String pname)
+    public static ChatChannel getFocusedChannel(String pname)
     {
         try
         {
-            return this.focusedChannelMap.get(pname);
+            return ChatManager.focusedChannelMap.get(pname);
         }catch(Exception e)
         {
             return null;
         }
     }
     
-    public String getFocusedChannelName(String pname)
+    public static String getFocusedChannelName(String pname)
     {
-        return this.focusedChannelStrMap.get(pname);
+        return ChatManager.focusedChannelStrMap.get(pname);
     }
     
-    public void setFocusedChannel(String pname, String channel) //Used Player as param to ensure the player will be online
+    public static void setFocusedChannel(String pname, String channel) //Used Player as param to ensure the player will be online
     {
-        this.focusedChannelMap.put(pname, this.getChannel(channel));
-        this.getChannel(channel).addPlayer(pname);
-        this.focusedChannelStrMap.put(pname, channel);
+        ChatManager.focusedChannelMap.put(pname, ChatManager.getChannel(channel));
+        ChatManager.getChannel(channel).addPlayer(pname);
+        ChatManager.focusedChannelStrMap.put(pname, channel);
         
     }
     
-    public HashMap<String,ChatChannel> getFocusedChannelMap()
+    public static HashMap<String,ChatChannel> getFocusedChannelMap()
     {
-        return this.focusedChannelMap;
+        return ChatManager.focusedChannelMap;
     }
     
     //Returns ChatChannelObj
-    public ChatChannel getChannel(String name)
+    public static ChatChannel getChannel(String name)
     {
-        return this.channelConverter.get(name);
+        return ChatManager.channelConverter.get(name);
     }
     
-    public String getChannelName(ChatChannel channel)
+    public static String getChannelName(ChatChannel channel)
     {
-        return this.channelConverterRev.get(channel);
+        return ChatManager.channelConverterRev.get(channel);
     }
     
-    public String getChannelFromNick(String nick)
+    public static String getChannelFromNick(String nick)
     {
-        return this.allChannelsReverse.get(nick);
+        return ChatManager.allChannelsReverse.get(nick);
     }
     
-    public String getChannelColor(String channel)
+    public static String getChannelColor(String channel)
     {
         VConfig chConfig = new VConfig(plugin.getDataFolder()+File.separator+"/channels", channel+".yml", plugin);
         
         return ChatColor.translateAlternateColorCodes('&', chConfig.getConfig().getString("color"));
     }
     
-    public void leaveFocusedChannel(String pname)
+    public static void leaveFocusedChannel(String pname)
     {
-        this.playerLstnChannels.get(pname).remove(this.getFocusedChannelName(pname));
-        this.getFocusedChannel(pname).removePlayer(pname);
-        this.setFocusedChannel(pname, this.playerLstnChannels.get(pname).get(0));
+        ChatManager.playerLstnChannels.get(pname).remove(ChatManager.getFocusedChannelName(pname));
+        ChatManager.getFocusedChannel(pname).removePlayer(pname);
+        ChatManager.setFocusedChannel(pname, ChatManager.playerLstnChannels.get(pname).get(0));
     }
     
-    public HashMap<String,ArrayList<String>> getListeningChannelsMap()
+    public static HashMap<String,ArrayList<String>> getListeningChannelsMap()
     {
-        return this.playerLstnChannels;
+        return ChatManager.playerLstnChannels;
     }
     
-    public void addChannelToPlayer(String pname, String channel)
+    public static void addChannelToPlayer(String pname, String channel)
     {
-        if(!this.playerLstnChannels.containsKey(pname))
+        if(!ChatManager.playerLstnChannels.containsKey(pname))
         {
             ArrayList<String> temp = new ArrayList<>();
             temp.add(channel);
-            this.playerLstnChannels.put(pname, temp);
+            ChatManager.playerLstnChannels.put(pname, temp);
         }else
         {
-            ArrayList<String> temp = this.playerLstnChannels.get(pname);
+            ArrayList<String> temp = ChatManager.playerLstnChannels.get(pname);
             if(temp.contains(channel))
             {
                 return;
             }
             temp.add(channel);
-            this.playerLstnChannels.put(pname, temp);
+            ChatManager.playerLstnChannels.put(pname, temp);
         }      
     }
     
-    public void setSilentChat(String pname, Boolean activator)
+    public static void setSilentChat(String pname, Boolean activator)
     {
-        this.chatSilencer.put(pname, activator);
+        ChatManager.chatSilencer.put(pname, activator);
     }
     
-    public Boolean isChatSilenced(String pname)
+    public static Boolean isChatSilenced(String pname)
     {
-        if(this.chatSilencer.get(pname))
-        {
-            return true;
-        }else
+        if(!ChatManager.chatSilencer.get(pname))
         {
             return false;
+        }else
+        {
+            return true;
         }
     }
     
-    public Boolean isMuted(String pname)
+    public static Boolean isMuted(String pname)
     {
         VConfig mutesConfig = new VConfig(plugin.getDataFolder().getAbsolutePath(), "mutes.yml", plugin);
         List<String> mutes = mutesConfig.getConfig().getStringList("mutes");

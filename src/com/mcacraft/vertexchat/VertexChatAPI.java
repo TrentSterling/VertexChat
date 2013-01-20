@@ -3,6 +3,7 @@ package com.mcacraft.vertexchat;
 import com.massivecraft.factions.FPlayer;
 import com.massivecraft.factions.FPlayers;
 import com.mcacraft.easypromote.EasyPromoteAPI;
+import com.mcacraft.vertexchat.chat.ChatManager;
 import com.mcacraft.vertexchat.util.VConfig;
 import java.io.File;
 import java.io.FileWriter;
@@ -21,13 +22,13 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  */
 public class VertexChatAPI 
 {
-    private VertexChat plugin;
+    private static VertexChat plugin;
     
     public static Permission permission = null;
     
     //private String[] colorCodes = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "k", "l", "m", "n", "o", "r"};
 
-    private boolean setupPermissions()
+    private static boolean setupPermissions()
     {
         RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
@@ -40,10 +41,10 @@ public class VertexChatAPI
     
     public VertexChatAPI(VertexChat instance)
     {
-        this.plugin = instance;
+        VertexChatAPI.plugin = instance;
     }
     
-    public String parseFormat(String message, Player p, String channel)
+    public static String parseFormat(String message, Player p, String channel)
     {
         VConfig channelConfig = new VConfig(plugin.getDataFolder()+File.separator+"channels", channel+".yml", plugin);
         
@@ -58,10 +59,10 @@ public class VertexChatAPI
         }
         
         String color = channelConfig.getConfig().getString("color");
-        String focusedChannel = plugin.getChatManager().getFocusedChannelName(p.getName());
-        String cNick = plugin.getChatManager().getNick(focusedChannel);
+        String focusedChannel = ChatManager.getFocusedChannelName(p.getName());
+        String cNick = ChatManager.getNick(focusedChannel);
         
-        String temp = output.replaceAll("%player%", p.getName()).replaceAll("%prefix%", getPrefix(p.getName())).replaceAll("%suffix%", getSuffix(p.getName())).replaceAll("%color%", color).replaceAll("%channel%", focusedChannel).replaceAll("%faction%", this.parseFaction(p)).replaceAll("%nick%", cNick);
+        String temp = output.replaceAll("%player%", p.getName()).replaceAll("%prefix%", getPrefix(p.getName())).replaceAll("%suffix%", getSuffix(p.getName())).replaceAll("%color%", color).replaceAll("%channel%", focusedChannel).replaceAll("%faction%", VertexChatAPI.parseFaction(p)).replaceAll("%nick%", cNick);
         
         if(p.hasPermission("vertexchat.color"))
         {
@@ -73,7 +74,7 @@ public class VertexChatAPI
         
     }
     
-    public String logParseFormat(String message, Player p, String channel)
+    public static String logParseFormat(String message, Player p, String channel)
     {
         VConfig channelConfig = new VConfig(plugin.getDataFolder()+File.separator+"channels", channel+".yml", plugin);
         
@@ -90,28 +91,28 @@ public class VertexChatAPI
         
         //Some variahbles so the parsing line isnt so long
         String color = channelConfig.getConfig().getString("color");
-        String focusedChannel = plugin.getChatManager().getFocusedChannelName(p.getName());
-        String cNick = plugin.getChatManager().getNick(focusedChannel);
+        String focusedChannel = ChatManager.getFocusedChannelName(p.getName());
+        String cNick = ChatManager.getNick(focusedChannel);
         
         //There has to be a better way to do this..
-        String temp = output.replaceAll("%player%", p.getName()).replaceAll("%prefix%", getGroup(p.getName())).replaceAll("%suffix%", getSuffix(p.getName())).replaceAll("%color%", color).replaceAll("%channel%", focusedChannel).replaceAll("%faction%", this.parseFaction(p)).replaceAll("%nick%", cNick);
+        String temp = output.replaceAll("%player%", p.getName()).replaceAll("%prefix%", getPrefix(p.getName())).replaceAll("%suffix%", getSuffix(p.getName())).replaceAll("%color%", color).replaceAll("%channel%", focusedChannel).replaceAll("%faction%", VertexChatAPI.parseFaction(p)).replaceAll("%nick%", cNick);
         String replaceAll = temp+" "+message;
         
-        return this.removeColorCodes(replaceAll);
+        return VertexChatAPI.removeColorCodes(replaceAll);
         
     }
     
-    public String removeColorCodes(String input)
+    public static String removeColorCodes(String input)
     {
         return input.replaceAll("&[a-fk-r0-9]", "");
     }
     
-    public String getGroup(String player)
+    public static String getGroup(String player)
     {
         return EasyPromoteAPI.getGroup(player);
     }
     
-    public String getPrefix(String player)
+    public static String getPrefix(String player)
     {
         VConfig groups = new VConfig(Bukkit.getPluginManager().getPlugin("bPermissions").getDataFolder().getAbsolutePath(), "groups.yml", Bukkit.getPluginManager().getPlugin("bPermissions"));
         if(!groups.getConfig().contains("groups"))
@@ -122,7 +123,7 @@ public class VertexChatAPI
         return groups.getConfig().getString("groups."+getGroup(player)+".meta.prefix");
     }
     
-    public String getSuffix(String player)
+    public static String getSuffix(String player)
     {
         VConfig groups = new VConfig(Bukkit.getPluginManager().getPlugin("bPermissions").getDataFolder().getAbsolutePath(), "groups.yml", Bukkit.getPluginManager().getPlugin("bPermissions"));
         if(!groups.getConfig().contains("groups"))
@@ -133,7 +134,7 @@ public class VertexChatAPI
         return groups.getConfig().getString("groups."+getGroup(player)+".meta.suffix");
     }
     
-    private String parseFaction(Player p)
+    private static String parseFaction(Player p)
     {
         if(Bukkit.getPluginManager().getPlugin("Factions") == null)
         {
@@ -151,19 +152,19 @@ public class VertexChatAPI
         }
     }
     
-    public void reloadConfiguration()
+    public static void reloadConfiguration()
     {
         plugin.reloadConfig();
         VConfig groups = new VConfig(plugin.getDataFolder().getPath(), "groups.yml", plugin);
         groups.reloadConfig();
-        for(String s : plugin.getChatManager().getAvaliableChannels())
+        for(String s : ChatManager.getAvaliableChannels())
         {
             VConfig temp = new VConfig(plugin.getDataFolder()+File.separator+"channels", s+".yml", plugin);
             temp.reloadConfig();
         }
     }
     
-    public void logToFile(String message)
+    public static void logToFile(String message)
     {
         File logFile = new File(plugin.getDataFolder(), "log.txt");
         FileWriter fw;

@@ -70,11 +70,11 @@ public class VertexChat extends JavaPlugin
         {
             for(String s : this.getConfig().getStringList("channels"))
             {
-                this.getChatManager().createChannel(s);
+                ChatManager.createChannel(s);
             }
         }else
         {
-            this.getChatManager().createChannel(this.getConfig().getString("default-channel"));
+            ChatManager.createChannel(this.getConfig().getString("default-channel"));
         }
     }
     
@@ -83,13 +83,13 @@ public class VertexChat extends JavaPlugin
 //        getChatManager().createChannel(this.getConfig().getString("default-channel"));
 //    }
     
-    public ChatManager getChatManager()
-    {
-        return this.chatManager;
-    }
-    
-    public VertexChatAPI getAPI()
-    {
-        return this.api;
-    }
+//    public ChatManager getChatManager()
+//    {
+//        return this.chatManager;
+//    }
+//    
+//    public VertexChatAPI getAPI()
+//    {
+//        return this.api;
+//    }
 }

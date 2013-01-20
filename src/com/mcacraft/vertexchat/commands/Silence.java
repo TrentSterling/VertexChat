@@ -1,6 +1,7 @@
 package com.mcacraft.vertexchat.commands;
 
 import com.mcacraft.vertexchat.VertexChat;
+import com.mcacraft.vertexchat.chat.ChatManager;
 import com.mcacraft.vertexchat.util.MSG;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -41,13 +42,13 @@ public class Silence implements CommandExecutor
                 MSG.noPermMessage(player, "/silence");
                 return true;
             }
-            if(plugin.getChatManager().isChatSilenced(player.getName()))
+            if(ChatManager.isChatSilenced(player.getName()))
             {
-                plugin.getChatManager().setSilentChat(player.getName(), Boolean.FALSE);
+                ChatManager.setSilentChat(player.getName(), Boolean.FALSE);
                 player.sendMessage(ChatColor.BLUE+"Your chat has been "+ChatColor.GREEN+"enabled"+ChatColor.BLUE+" !");
             }else
             {
-                plugin.getChatManager().setSilentChat(player.getName(), Boolean.TRUE);
+                ChatManager.setSilentChat(player.getName(), Boolean.TRUE);
                 player.sendMessage(ChatColor.BLUE+"Your chat has been "+ChatColor.RED+"disabled"+ChatColor.BLUE+" !");
             }
         }
