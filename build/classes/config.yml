@@ -1,0 +1,5 @@
+default-channel: Global
+format:
+  default: '[%color%%channel%]%faction%[%prefix%][%player%]'
+  parse-faction: '[%ftag%]'
+log-chat: true

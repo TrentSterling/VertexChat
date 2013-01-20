@@ -1,0 +1,16 @@
+name: VertexChat
+main: com.mcacraft.vertexchat.VertexChat
+version: 0.1
+author: MrComputeranswers
+website: http://mcacraft.com
+description: A chat management plugin
+
+commands:
+  ch:
+    description: Main chat channel menu
+  silence:
+    description: Removes you from the chat
+  mute:
+    description: Mutes a player
+  unmute:
+    description: Unmutes a player

@@ -1,0 +1,8 @@
+name: Global
+nick: G
+format: '%default%'
+password: ''
+color: '&f'
+verbose: true
+bans: []
+mutes: []
