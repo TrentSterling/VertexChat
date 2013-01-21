@@ -1,0 +1,38 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	modified:   src/com/mcacraft/vertexchat/VertexChat.java
+#	modified:   src/com/mcacraft/vertexchat/VertexChatAPI.java
+#	modified:   src/com/mcacraft/vertexchat/commands/ChannelCommand.java
+#	new file:   src/com/mcacraft/vertexchat/commands/ReloadOverride.java
+#	modified:   src/com/mcacraft/vertexchat/listeners/ChatListener.java
+#	new file:   src/com/mcacraft/vertexchat/listeners/PlayerQuit.java
+#	modified:   src/com/mcacraft/vertexchat/util/VConfig.java
+#	deleted:    src/groups.yml
+#
+# Changes not staged for commit:
+#   (use "git add/rm <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   build/built-jar.properties
+#	modified:   build/classes/com/mcacraft/vertexchat/VertexChat.class
+#	modified:   build/classes/com/mcacraft/vertexchat/VertexChatAPI.class
+#	modified:   build/classes/com/mcacraft/vertexchat/commands/ChannelCommand.class
+#	modified:   build/classes/com/mcacraft/vertexchat/listeners/ChatListener.class
+#	modified:   build/classes/com/mcacraft/vertexchat/util/VConfig.class
+#	deleted:    build/classes/groups.yml
+#	modified:   dist/lib/EasyPromote.jar
+#	deleted:    dist/lib/bukkit-1.4.5-R1.0.jar
+#	modified:   nbproject/project.properties
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	.gitignore
+#	build/classes/com/mcacraft/vertexchat/commands/ReloadOverride.class
+#	build/classes/com/mcacraft/vertexchat/listeners/PlayerQuit.class
+

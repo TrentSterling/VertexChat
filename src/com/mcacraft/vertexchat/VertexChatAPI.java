@@ -26,6 +26,8 @@ public class VertexChatAPI
     
     public static Permission permission = null;
     
+    
+    
     //private String[] colorCodes = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "k", "l", "m", "n", "o", "r"};
 
     private static boolean setupPermissions()
@@ -62,7 +64,7 @@ public class VertexChatAPI
         String focusedChannel = ChatManager.getFocusedChannelName(p.getName());
         String cNick = ChatManager.getNick(focusedChannel);
         
-        String temp = output.replaceAll("%player%", p.getName()).replaceAll("%prefix%", getPrefix(p.getName())).replaceAll("%suffix%", getSuffix(p.getName())).replaceAll("%color%", color).replaceAll("%channel%", focusedChannel).replaceAll("%faction%", VertexChatAPI.parseFaction(p)).replaceAll("%nick%", cNick);
+        String temp = output.replaceAll("%player%", p.getDisplayName()).replaceAll("%prefix%", VertexChatAPI.getPrefix(p.getName())).replaceAll("%suffix%", VertexChatAPI.getSuffix(p.getName())).replaceAll("%color%", color).replaceAll("%channel%", focusedChannel).replaceAll("%faction%", VertexChatAPI.parseFaction(p)).replaceAll("%nick%", cNick);
         
         if(p.hasPermission("vertexchat.color"))
         {
@@ -94,8 +96,10 @@ public class VertexChatAPI
         String focusedChannel = ChatManager.getFocusedChannelName(p.getName());
         String cNick = ChatManager.getNick(focusedChannel);
         
+        
+        
         //There has to be a better way to do this..
-        String temp = output.replaceAll("%player%", p.getName()).replaceAll("%prefix%", getPrefix(p.getName())).replaceAll("%suffix%", getSuffix(p.getName())).replaceAll("%color%", color).replaceAll("%channel%", focusedChannel).replaceAll("%faction%", VertexChatAPI.parseFaction(p)).replaceAll("%nick%", cNick);
+        String temp = output.replaceAll("%player%", p.getDisplayName()).replaceAll("%prefix%", getPrefix(p.getName())).replaceAll("%suffix%", getSuffix(p.getName())).replaceAll("%color%", color).replaceAll("%channel%", focusedChannel).replaceAll("%faction%", VertexChatAPI.parseFaction(p)).replaceAll("%nick%", cNick);
         String replaceAll = temp+" "+message;
         
         return VertexChatAPI.removeColorCodes(replaceAll);
@@ -115,23 +119,23 @@ public class VertexChatAPI
     public static String getPrefix(String player)
     {
         VConfig groups = new VConfig(Bukkit.getPluginManager().getPlugin("bPermissions").getDataFolder().getAbsolutePath(), "groups.yml", Bukkit.getPluginManager().getPlugin("bPermissions"));
-        if(!groups.getConfig().contains("groups"))
+        if(!groups.getConfig().contains("groups."+VertexChatAPI.getGroup(player).toLowerCase()+".meta.prefix"))
         {
-            Bukkit.getLogger().log(Level.WARNING, "bPermisisons groups.yml located in bPermissions/groups.yml is not formatted properly or is empty.");
+            Bukkit.getLogger().log(Level.WARNING, "Missing prefix for group "+VertexChatAPI.getGroup(player));
             return "#pError#";
         }
-        return groups.getConfig().getString("groups."+getGroup(player)+".meta.prefix");
+        return groups.getConfig().getString("groups."+getGroup(player).toLowerCase()+".meta.prefix");
     }
     
     public static String getSuffix(String player)
     {
         VConfig groups = new VConfig(Bukkit.getPluginManager().getPlugin("bPermissions").getDataFolder().getAbsolutePath(), "groups.yml", Bukkit.getPluginManager().getPlugin("bPermissions"));
-        if(!groups.getConfig().contains("groups"))
+        if(!groups.getConfig().contains("groups."+VertexChatAPI.getGroup(player).toLowerCase()+".meta.suffix"))
         {
-            Bukkit.getLogger().log(Level.WARNING, "bPermisisons groups.yml located in bPermissions/groups.yml is not formatted properly or is empty.");
+            Bukkit.getLogger().log(Level.WARNING, "Missing suffix for group "+VertexChatAPI.getGroup(player));
             return "#sError#";
         }
-        return groups.getConfig().getString("groups."+getGroup(player)+".meta.suffix");
+        return groups.getConfig().getString("groups."+getGroup(player).toLowerCase()+".meta.suffix");
     }
     
     private static String parseFaction(Player p)
@@ -184,7 +188,27 @@ public class VertexChatAPI
         for(String s : ChatManager.getListeningChannelsMap().keySet())
         {
             data.getConfig().set(s, ChatManager.getListeningChannelsMap().get(s));
+            data.saveConfig();
         }
-        data.saveConfig();
+    }
+    
+    
+    //Only to be used for when the server reloads
+    public static void reloadChannels()
+    {
+        for(Player p : Bukkit.getOnlinePlayers())
+        {
+            if(!ChatManager.hasChannel(p.getName()))
+            {
+                VConfig data = new VConfig(plugin.getDataFolder()+File.separator+"data", "focused-channels.yml", plugin);
+                for(String s : data.getConfig().getStringList(p.getName()))
+                {
+                    ChatManager.getChannel(s).addPlayer(p.getName());
+                    ChatManager.addChannelToPlayer(p.getName(), s);
+                }
+                ChatManager.setFocusedChannel(p.getName(), ChatManager.getDefaultChannel());
+                ChatManager.setSilentChat(p.getName(), Boolean.FALSE);
+            }
+        }
     }
 }

@@ -130,6 +130,7 @@ public class ChannelCommand implements CommandExecutor
                     output += temp.getConfig().getString("color");
                     output+= s;
                 }
+                sender.sendMessage(ChatColor.GREEN+"==========VertexChat Avaliable Channels==========");
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', output));
             }else if(args[0].equalsIgnoreCase("help"))
             {
@@ -161,18 +162,28 @@ public class ChannelCommand implements CommandExecutor
                 {
                     if(s.equalsIgnoreCase(args[0]))
                     {
-                        if(ChatManager.getChannelFromNick(s).equalsIgnoreCase(ChatManager.getFocusedChannelName(sender.getName())))
-                        {
-                            sender.sendMessage(ChatColor.RED+"Error: You are already focused on "+ChatManager.getChannelColor(ChatManager.getFocusedChannelName(sender.getName())) +ChatManager.getFocusedChannelName(sender.getName()));
-                            return true;
-                        }
                         if(sender instanceof Player)
                         {
+                            if(!sender.hasPermission("vertexchat.join.*"))
+                            {
+                                if(!sender.hasPermission("vertexchat.join."+ChatManager.getChannelFromNick(s)))
+                                {
+                                    sender.sendMessage(ChatColor.RED+"You don't have permission to join "+ChatManager.getChannelFromNick(s));
+                                    return true;
+                                }
+                            }
+
+                            if(ChatManager.getChannelFromNick(s).equalsIgnoreCase(ChatManager.getFocusedChannelName(sender.getName())))
+                            {
+                                sender.sendMessage(ChatColor.RED+"Error: You are already focused on "+ChatManager.getChannelColor(ChatManager.getFocusedChannelName(sender.getName())) +ChatManager.getFocusedChannelName(sender.getName()));
+                                return true;
+                            }
                             ChatManager.addChannelToPlayer(sender.getName(), ChatManager.getChannelFromNick(s));
                             ChatManager.setFocusedChannel(sender.getName(), ChatManager.getChannelFromNick(s));
                             sender.sendMessage(ChatColor.GREEN+"Focused on "+ChatManager.getChannelColor(ChatManager.getFocusedChannelName(sender.getName())) +ChatManager.getFocusedChannelName(sender.getName()));
                             return true;
                         }
+                        
                     }
                 }
                 sender.sendMessage(ChatColor.RED+"Unknown argument. Type "+ChatColor.YELLOW+"/ch help"+ChatColor.RED+" for a list of commands.");

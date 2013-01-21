@@ -28,7 +28,8 @@ public class VConfig
         {
             throw new IllegalArgumentException("Plugin cannot be null!");
         }
-
+        
+        
         this.path = path;
         this.fileName = fileName;
         this.plugin = plugin;
@@ -53,7 +54,6 @@ public class VConfig
     {
         if(fileConfig == null)
         {
-            Logger.getLogger("Minecraft").log(Level.INFO, "1");
             this.reloadConfig();
         }
         return fileConfig;

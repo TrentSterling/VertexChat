@@ -1,13 +1,16 @@
 package com.mcacraft.vertexchat;
 
+import com.mcacraft.easypromote.EasyPromoteAPI;
 import com.mcacraft.vertexchat.chat.ChatChannel;
 import com.mcacraft.vertexchat.chat.ChatManager;
 import com.mcacraft.vertexchat.commands.ChannelCommand;
 import com.mcacraft.vertexchat.commands.Mute;
+import com.mcacraft.vertexchat.commands.ReloadOverride;
 import com.mcacraft.vertexchat.commands.Silence;
 import com.mcacraft.vertexchat.commands.Unmute;
 import com.mcacraft.vertexchat.listeners.ChatListener;
 import com.mcacraft.vertexchat.listeners.PlayerJoin;
+import com.mcacraft.vertexchat.listeners.PlayerQuit;
 import com.mcacraft.vertexchat.util.VConfig;
 import java.io.File;
 import java.util.logging.Level;
@@ -30,6 +33,10 @@ public class VertexChat extends JavaPlugin
     private Silence silence = new Silence(this);
     private Mute mute = new Mute(this);
     private Unmute unmute = new Unmute(this);
+    private PlayerQuit pq = new PlayerQuit();
+    private ReloadOverride ro = new ReloadOverride(this);
+    
+    public boolean updateChannels = false;
     
     @Override
     public void onEnable()
@@ -38,21 +45,13 @@ public class VertexChat extends JavaPlugin
         setupFiles();
         //createDefaultChannel();
         setupChannels();
+        VertexChatAPI.reloadChannels();
+        this.updateChannels = false;
     }
     
     @Override
     public void onDisable()
     {
-        if(!this.isEnabled())
-        {
-            Bukkit.getLogger().log(Level.INFO, "not enabled");
-        }
-        
-        if(this == null)
-        {
-            Bukkit.getLogger().log(Level.INFO, "null plugin on the lose");
-        }
-        Bukkit.getLogger().log(Level.INFO, this.getDataFolder().getAbsolutePath());
         VertexChatAPI.saveFocusedChannels();
     }
     
@@ -65,6 +64,8 @@ public class VertexChat extends JavaPlugin
         this.getCommand("unmute").setExecutor(this.unmute);
         pm.registerEvents(this.playerJoin, this);
         pm.registerEvents(this.chatListener, this);
+        pm.registerEvents(this.pq, this);
+        pm.registerEvents(this.ro, this);
     }
     
     private void setupFiles()
@@ -74,8 +75,6 @@ public class VertexChat extends JavaPlugin
         {
             this.saveDefaultConfig();
         }
-        VConfig groups = new VConfig(this.getDataFolder().getPath(), "groups.yml", this);
-        groups.saveDefaultConfig();
     }
     
     private void setupChannels()
@@ -91,6 +90,14 @@ public class VertexChat extends JavaPlugin
         }else
         {
             ChatManager.createChannel(this.getConfig().getString("default-channel"));
+        }
+    }
+    
+    private void updateChannels()
+    {
+        if(this.updateChannels)
+        {
+            VertexChatAPI.reloadChannels();
         }
     }
     

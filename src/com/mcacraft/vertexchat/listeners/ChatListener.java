@@ -33,18 +33,18 @@ public class ChatListener implements Listener
     {
         Player player = event.getPlayer();
         String msgOriginal = event.getMessage();
-        
-        if(!ChatManager.hasChannel(player.getName()))
-        {
-            VConfig data = new VConfig(plugin.getDataFolder()+File.separator+"data", "focused-channels.yml", plugin);
-            for(String s : data.getConfig().getStringList(player.getName()))
-            {
-                ChatManager.getChannel(s).addPlayer(player.getName());
-                ChatManager.addChannelToPlayer(player.getName(), s);
-            }
-            ChatManager.setFocusedChannel(player.getName(), ChatManager.getDefaultChannel());
-            ChatManager.setSilentChat(player.getName(), Boolean.FALSE);
-        }
+        //Using different method for fixing the stupid /reload issue
+//        if(!ChatManager.hasChannel(player.getName()))
+//        {
+//            VConfig data = new VConfig(plugin.getDataFolder()+File.separator+"data", "focused-channels.yml", plugin);
+//            for(String s : data.getConfig().getStringList(player.getName()))
+//            {
+//                ChatManager.getChannel(s).addPlayer(player.getName());
+//                ChatManager.addChannelToPlayer(player.getName(), s);
+//            }
+//            ChatManager.setFocusedChannel(player.getName(), ChatManager.getDefaultChannel());
+//            ChatManager.setSilentChat(player.getName(), Boolean.FALSE);
+//        }
         
         //If the player is muted cancel the chat
         if(ChatManager.isMuted(player.getName()))
