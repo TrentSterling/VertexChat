@@ -1,6 +1,7 @@
 package com.mcacraft.vertexchat.commands;
 
 import com.mcacraft.vertexchat.VertexChat;
+import com.mcacraft.vertexchat.chat.ChatManager;
 import com.mcacraft.vertexchat.util.MSG;
 import com.mcacraft.vertexchat.util.VConfig;
 import java.util.List;
@@ -44,31 +45,21 @@ public class Unmute implements CommandExecutor
             
             if(args.length == 1)
             {
-                VConfig mutesConfig = new VConfig(plugin.getDataFolder().getAbsolutePath(), "mutes.yml", plugin);
-                List<String> mutes = mutesConfig.getConfig().getStringList("mutes");
                 Player p = Bukkit.getPlayer(args[0]);
                 if(p != null)
                 {
-                    if(!mutes.contains(p.getName()))
+                    if(!ChatManager.getMuted().contains(p.getName()))
                     {
                         sender.sendMessage(ChatColor.RED+"Error: Player "+ChatColor.YELLOW+p.getName()+ChatColor.RED+" is not muted !");
                         return true;
                     }
-                    mutes.remove(p.getName());
-                    mutesConfig.getConfig().set("mutes", mutes.toArray());
-                    mutesConfig.saveConfig();
+                    ChatManager.unmute(p.getName());
                     sender.sendMessage(ChatColor.GREEN+"Successfully unmuted "+ChatColor.YELLOW+p.getName()+ChatColor.GREEN+" !");
+                    p.sendMessage(ChatColor.GREEN+"You have been unmuted! Celebrate!");
                 }else
                 {
-                    if(!mutes.contains(args[0]))
-                    {
-                        sender.sendMessage(ChatColor.RED+"Error: Player "+ChatColor.YELLOW+args[0]+ChatColor.RED+" is not muted !");
-                        return true;
-                    }
-                    mutes.remove(args[0]);
-                    mutesConfig.getConfig().set("mutes", mutes);
-                    mutesConfig.saveConfig();
-                    sender.sendMessage(ChatColor.GREEN+"Successfully unmuted "+ChatColor.YELLOW+args[0]+ChatColor.GREEN+" !");
+                    sender.sendMessage(ChatColor.RED+"Error: Player "+ChatColor.YELLOW+args[0]+ChatColor.RED+" must be online!");
+                    return true;
                 }
                 return true;
             }

@@ -1,6 +1,7 @@
 package com.mcacraft.vertexchat.commands;
 
 import com.mcacraft.vertexchat.VertexChat;
+import com.mcacraft.vertexchat.chat.ChatManager;
 import com.mcacraft.vertexchat.util.MSG;
 import com.mcacraft.vertexchat.util.VConfig;
 import java.util.List;
@@ -43,33 +44,23 @@ public class Mute implements CommandExecutor
             
             if(args.length == 1)
             {
-                List<String> mutes = plugin.getConfig().getStringList("mutes");
-                VConfig mutesConfig = new VConfig(plugin.getDataFolder().getAbsolutePath(), "mutes.yml", plugin);
                 Player p = Bukkit.getPlayer(args[0]);
                 if(p != null)
                 {
-                    if(mutes.contains(p.getName()))
+                    if(ChatManager.getMuted().contains(p.getName()))
                     {
                         sender.sendMessage(ChatColor.RED+"Error: Player "+ChatColor.YELLOW+p.getName()+ChatColor.RED+" is already muted.");
                         return true;
                     }
-                    mutes.add(p.getName());
-                    mutesConfig.getConfig().set("mutes", mutes.toArray());
-                    mutesConfig.saveConfig();
+                    ChatManager.mute(p.getName());
                     sender.sendMessage(ChatColor.GREEN+"Successfully muted "+ChatColor.YELLOW+p.getName()+ChatColor.GREEN+" !");
+                    p.sendMessage(ChatColor.RED+"Uh oh, you have been muted..");
+                    return true;
                 }else
                 {
-                    if(mutes.contains(args[0]))
-                    {
-                        sender.sendMessage(ChatColor.RED+"Error: Player "+ChatColor.YELLOW+args[0]+ChatColor.RED+" is already muted.");
-                        return true;
-                    }
-                    mutes.add(args[0]);
-                    mutesConfig.getConfig().set("mutes", mutes);
-                    mutesConfig.saveConfig();
-                    sender.sendMessage(ChatColor.GREEN+"Successfully muted "+ChatColor.YELLOW+args[0]+ChatColor.GREEN+" !");
+                    sender.sendMessage(ChatColor.RED+"Error: Player "+ChatColor.YELLOW+args[0]+ChatColor.RED+" must be online!");
+                    return true;
                 }
-                return true;
             }
             
             if(args.length > 1)

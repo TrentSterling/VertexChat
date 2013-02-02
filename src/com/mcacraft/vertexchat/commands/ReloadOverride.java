@@ -43,6 +43,7 @@ public class ReloadOverride implements Listener
                 player.sendMessage(ChatColor.RED+"Usage: /reload");
                 event.setCancelled(true);
             }
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "save-all");
             plugin.updateChannels = true;
         }
     }

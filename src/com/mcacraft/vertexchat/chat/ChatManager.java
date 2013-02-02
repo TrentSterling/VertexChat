@@ -27,6 +27,7 @@ public class ChatManager
     private static HashMap<String,ArrayList<String>> playerLstnChannels = new HashMap<>(); //{PlayerName, List of all the channels they are listening to}
     
     private static HashMap<String,Boolean> chatSilencer = new HashMap<>();
+    private static List<String> isMuted;
     
     public ChatManager(){}
     
@@ -37,15 +38,6 @@ public class ChatManager
     
     public static void createChannel(String name)
     {
-        ChatManager.allChannels.put(name, String.valueOf(name.toUpperCase().charAt(0)));
-        ChatManager.channelConverter.put(name, new ChatChannel());
-        ChatManager.allChannelsReverse.put(String.valueOf(name.toUpperCase().charAt(0)), name);
-        ChatManager.channelConverterRev.put(new ChatChannel(), name);
-        Bukkit.getLogger().log(Level.INFO, allChannels.toString());
-        Bukkit.getLogger().log(Level.INFO, channelConverter.toString());
-        Bukkit.getLogger().log(Level.INFO, allChannelsReverse.toString());
-        Bukkit.getLogger().log(Level.INFO, channelConverterRev.toString());
-        
         File f = new File(plugin.getDataFolder()+File.separator+"channels"+File.separator+name+".yml");
         if(!f.exists())
         {
@@ -71,7 +63,23 @@ public class ChatManager
             config.getConfig().set("color", "&f");
             config.getConfig().set("verbose", Boolean.TRUE);
             config.saveConfig();
+            ChatChannel channel = new ChatChannel(plugin, name);
         }
+        if(plugin == null)
+        {
+            System.out.println("Null plugin");
+        }
+        ChatChannel channel = new ChatChannel(plugin, name);
+        
+        ChatManager.allChannels.put(name, String.valueOf(name.toUpperCase().charAt(0)));
+        ChatManager.channelConverter.put(name, channel);
+        ChatManager.allChannelsReverse.put(String.valueOf(name.toUpperCase().charAt(0)), name);
+        ChatManager.channelConverterRev.put(channel, name);
+
+        Bukkit.getLogger().log(Level.INFO, allChannels.toString());
+        Bukkit.getLogger().log(Level.INFO, channelConverter.toString());
+        Bukkit.getLogger().log(Level.INFO, allChannelsReverse.toString());
+        Bukkit.getLogger().log(Level.INFO, channelConverterRev.toString());
     }
     
     public static void deleteChannel(String name)
@@ -200,7 +208,12 @@ public class ChatManager
             }
             temp.add(channel);
             ChatManager.playerLstnChannels.put(pname, temp);
-        }      
+        }
+    }
+    
+    public static void setListeningMap(HashMap<String,ArrayList<String>> map)
+    {
+        ChatManager.playerLstnChannels = map;
     }
     
     public static void setSilentChat(String pname, Boolean activator)
@@ -221,13 +234,31 @@ public class ChatManager
     
     public static Boolean isMuted(String pname)
     {
-        VConfig mutesConfig = new VConfig(plugin.getDataFolder().getAbsolutePath(), "mutes.yml", plugin);
-        List<String> mutes = mutesConfig.getConfig().getStringList("mutes");
-        if(mutes.contains(pname))
+        if(ChatManager.isMuted.contains(pname))
         {
             return true;
         }
         return false;
+    }
+    
+    public static void mute(String pname)
+    {
+        ChatManager.isMuted.add(pname);
+    }
+    
+    public static void unmute(String pname)
+    {
+        ChatManager.isMuted.remove(pname);
+    }
+    
+    public static List<String> getMuted()
+    {
+        return ChatManager.isMuted;
+    }
+    
+    public static void setMutedList(List<String> mutedPlayers)
+    {
+        ChatManager.isMuted = mutedPlayers;
     }
     
     public static Boolean hasChannel(String pname)
@@ -244,5 +275,24 @@ public class ChatManager
     public static String getDefaultChannel()
     {
         return plugin.getConfig().getString("default-channel");
+    }
+    
+    public static void reloadChannels()
+    {
+        for(String s : plugin.getConfig().getStringList("channels"))
+        {
+            ChatManager.createChannel(s);
+        }
+    }
+    
+    public static void setupMuted()
+    {
+        VConfig muted = new VConfig(plugin.getDataFolder().getAbsolutePath(), "muted.yml", plugin);
+        if(muted.getConfig().contains("muted"))
+        {
+            ChatManager.isMuted = muted.getConfig().getStringList("muted");
+            return;
+        }
+        ChatManager.isMuted = new ArrayList<>();
     }
 }

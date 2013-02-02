@@ -31,8 +31,8 @@ public class ChatListener implements Listener
     @EventHandler
     public void playerChatEvent(AsyncPlayerChatEvent event)
     {
-        Player player = event.getPlayer();
-        String msgOriginal = event.getMessage();
+        final Player player = event.getPlayer();
+        final String msgOriginal = event.getMessage();
         //Using different method for fixing the stupid /reload issue
 //        if(!ChatManager.hasChannel(player.getName()))
 //        {
@@ -67,20 +67,30 @@ public class ChatListener implements Listener
             event.setCancelled(true);
             return;
         }
-        //Sends the chat message to all players in the channel
-        for(String s : ChatManager.getFocusedChannel(player.getName()).getPlayers())
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
         {
-            //Check to make sure it is sending to only players with their chat activated
-            if(!ChatManager.isChatSilenced(s))
+            @Override
+            public void run()
             {
-                Player p = Bukkit.getPlayer(s);
-                p.sendMessage(VertexChatAPI.parseFormat(msgOriginal, player, ChatManager.getFocusedChannelName(player.getName())));
+                //Sends the chat message to all players in the channel
+                for(String s : ChatManager.getFocusedChannel(player.getName()).getPlayers())
+                {
+                    //Check to make sure it is sending to only players with their chat activated
+                    if(!ChatManager.isChatSilenced(s))
+                    {
+                        Player p = Bukkit.getPlayer(s);
+                        if(p != null)
+                        {
+                            p.sendMessage(VertexChatAPI.parseFormat(msgOriginal, player, ChatManager.getFocusedChannelName(player.getName())));
+                        }
+                    }
+                }
             }
-        }
+        });
         
-        //If this channel should be logged to the console
-        VConfig chConfig = new VConfig(plugin.getDataFolder()+File.separator+"channels", ChatManager.getFocusedChannelName(player.getName())+".yml", plugin);
-        if(chConfig.getConfig().getBoolean("verbose"))
+        
+        //If this channel should be logged to the console  
+        if(ChatManager.getChannel(ChatManager.getFocusedChannelName(player.getName())).isVerbose())
         {
             Bukkit.getLogger().log(Level.INFO, VertexChatAPI.logParseFormat(msgOriginal, player, ChatManager.getFocusedChannelName(player.getName())));
         }
