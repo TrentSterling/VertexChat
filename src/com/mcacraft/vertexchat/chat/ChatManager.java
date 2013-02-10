@@ -279,6 +279,12 @@ public class ChatManager
     
     public static void reloadChannels()
     {
+        //Doesnt work because you need to reset ALL maps not just these. Including the playerlstn map due to a new chatchannelobj..
+        ChatManager.allChannels = new HashMap<>();
+        ChatManager.channelConverter = new HashMap<>();
+        ChatManager.allChannelsReverse = new HashMap<>();
+        ChatManager.channelConverterRev = new HashMap<>();
+        
         for(String s : plugin.getConfig().getStringList("channels"))
         {
             ChatManager.createChannel(s);

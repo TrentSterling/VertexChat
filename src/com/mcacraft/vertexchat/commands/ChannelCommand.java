@@ -65,7 +65,7 @@ public class ChannelCommand implements CommandExecutor
             }else if(args[0].equalsIgnoreCase("delete"))
             {
                 //Need to makre sure to kick all players from channel when the channel is deleted
-                if(args.length == 1)
+                if(args.length == 2)
                 {
                     try
                     {
@@ -76,7 +76,7 @@ public class ChannelCommand implements CommandExecutor
                     }
                 }else
                 {
-                    sender.sendMessage(ChatColor.RED+"Usage: /ch create <channel>");
+                    sender.sendMessage(ChatColor.RED+"Usage: /ch delete <channel>");
                     return true;
                 }
             }else if(args[0].equalsIgnoreCase("reload"))
@@ -151,6 +151,7 @@ public class ChannelCommand implements CommandExecutor
                 sender.sendMessage(gold+"/ch create"+blue+" Creates a chat channel");
                 sender.sendMessage(gold+"/ch delete"+blue+" Deletes a channel");
                 sender.sendMessage(gold+"/ch leave"+blue+" Leaves a channel");
+                sender.sendMessage(gold+"/ch list"+blue+" Lists all avaliable channels");
                 sender.sendMessage(gold+"/ch <nick>"+blue+" Joins a channel");
                 sender.sendMessage(gold+"/silence"+blue+" Silences the chat");
                 sender.sendMessage(gold+"/mute"+blue+" Mutes a player");

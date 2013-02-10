@@ -1,5 +1,7 @@
 package com.mcacraft.vertexchat.commands;
 
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
 import com.mcacraft.vertexchat.VertexChat;
 import com.mcacraft.vertexchat.chat.ChatManager;
 import com.mcacraft.vertexchat.util.MSG;
@@ -11,6 +13,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -19,10 +22,19 @@ import org.bukkit.entity.Player;
 public class Mute implements CommandExecutor
 {
     private VertexChat plugin;
+    protected Essentials ess;
     
     public Mute(VertexChat instance)
     {
         this.plugin = instance;
+    }
+    
+    public void loadEss()
+    {
+        Plugin essPlugin = Bukkit.getPluginManager().getPlugin("Essentials");
+        if(essPlugin != null && essPlugin instanceof Essentials){
+        ess = (Essentials) essPlugin;
+        }
     }
     
     @Override
@@ -52,6 +64,10 @@ public class Mute implements CommandExecutor
                         sender.sendMessage(ChatColor.RED+"Error: Player "+ChatColor.YELLOW+p.getName()+ChatColor.RED+" is already muted.");
                         return true;
                     }
+                    loadEss();
+                    User user = ess.getUser(p);
+                    user.setMuted(true);
+                    
                     ChatManager.mute(p.getName());
                     sender.sendMessage(ChatColor.GREEN+"Successfully muted "+ChatColor.YELLOW+p.getName()+ChatColor.GREEN+" !");
                     p.sendMessage(ChatColor.RED+"Uh oh, you have been muted..");
